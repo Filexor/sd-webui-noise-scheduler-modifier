@@ -91,7 +91,7 @@ class Noise_scheduler_modifier(scripts.Script):
         _p = p
 
     def sampler_noise_scheduler_override(steps):
-        global _p
+        global _p, _number_of_controls, _enable, _use_raw_sigma, _scheduler, _start_value, _end_value, _step, _rho
         model_wrap_cfg = CFGDenoiserKDiffusion(_p.sampler)
         model_wrap = model_wrap_cfg.inner_model
         sigmas = None

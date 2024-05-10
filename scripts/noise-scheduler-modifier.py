@@ -95,7 +95,7 @@ class Noise_scheduler_modifier(scripts.Script):
         model_wrap_cfg = CFGDenoiserKDiffusion(_p.sampler)
         model_wrap = model_wrap_cfg.inner_model
         sigmas = None
-        for i in range(4):
+        for i in range(_number_of_controls):
             if _enable[i]:
                 _step[i] = int(_step[i])
                 if not _use_raw_sigma[i]:
@@ -103,6 +103,9 @@ class Noise_scheduler_modifier(scripts.Script):
                     _end_value[i] = int(_end_value[i])
                     if _start_value[i] < 0 or _start_value[i] > 999 or _end_value[i] < 0 or _end_value[i] > 999:
                         raise IndexError('Specify value between 0 and 999 if "Use raw sigma" is unchecked.')
+                else:
+                    if _end_value[i] == 0:
+                        raise UserWarning('Avoid specifing 0 to end value if "Use raw sigma" is checked.')
                 if _scheduler[i] == 'karras':
                     if sigmas is None:
                         sigma_min = _end_value[i] if _use_raw_sigma[i] else model_wrap.sigmas[_end_value[i]].item()
@@ -162,7 +165,7 @@ def make_axis_options():
             
     extra_axis_options = []
     for i in range(_number_of_controls):
-        extra_axis_options.append(xyz_grid.AxisOption(f'[Noise scheduler modifier] enabled {i + 1}', bool, xyz_grid.apply_field(f'Noise_shceduler_modifier_enabled_{i + 1}')))
+        extra_axis_options.append(xyz_grid.AxisOption(f'[Noise scheduler modifier] enabled {i + 1}', bool, xyz_grid.apply_field(f'Noise_shceduler_modifier_enable_{i + 1}')))
         extra_axis_options.append(xyz_grid.AxisOption(f'[Noise scheduler modifier] use raw sigma {i + 1}', bool, xyz_grid.apply_field(f'Noise_shceduler_modifier_use_raw_sigma_{i + 1}')))
         extra_axis_options.append(xyz_grid.AxisOption(f'[Noise scheduler modifier] scheduler {i + 1}', str, xyz_grid.apply_field(f'Noise_shceduler_modifier_scheduler_{i + 1}'), confirm=confirm_scheduler, choices=lambda: _schedulers))
         extra_axis_options.append(xyz_grid.AxisOption(f'[Noise scheduler modifier] start value {i + 1}', float, xyz_grid.apply_field(f'Noise_shceduler_modifier_start_value_{i + 1}')))

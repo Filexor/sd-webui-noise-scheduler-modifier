@@ -97,6 +97,7 @@ class Noise_scheduler_modifier(scripts.Script):
         sigmas = None
         for i in range(4):
             if _enable[i]:
+                _step[i] = int(_step[i])
                 if not _use_raw_sigma[i]:
                     _start_value[i] = int(_start_value[i])
                     _end_value[i] = int(_end_value[i])
